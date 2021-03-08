@@ -1,4 +1,4 @@
-# EINAtic
+# EINAtic - Backend
 TP6 de la asignatura de Arquitectura software del Grado en Ingeniería Informática de la EINA (Universidad de Zaragoza).
 
 Esta primera versión está basada en el proyecto de ejemplo:
