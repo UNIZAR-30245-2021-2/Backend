@@ -27,6 +27,14 @@ func New() http.Handler {
 
 	r.Mount("/posts", pr.Routes())
 
+	sr := &SubjectRouter{
+		Repository: &data.SubjectRepository{
+			Data: data.New(),
+		},
+	}
+
+	r.Mount("/subjects", sr.Routes())
+
 	//TODO
 	// subjects_router
 	// replies_router
