@@ -122,8 +122,27 @@ func (pr *PostRouter) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 //TODO
-// GetBySubjectHandler response posts by subject id.
-// func (pr *PostRouter) GetBySubjectHandler(w http.ResponseWriter, r *http.Request)
+//GetBySubjectHandler response posts by subject id.
+func (pr *PostRouter) GetBySubjectHandler(w http.ResponseWriter, r *http.Request) {
+	subjectIDStr := chi.URLParam(r, "subjectId")
+
+	subjectID, err := strconv.Atoi(subjectIDStr)
+	if err != nil {
+		response.HTTPError(w, r, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx := r.Context()
+	posts, err := pr.Repository.GetBySubject(ctx, uint(subjectID))
+	if err != nil {
+		response.HTTPError(w, r, http.StatusNotFound, err.Error())
+		return
+	}
+
+	response.JSON(w, r, http.StatusOK, response.Map{"posts": posts})
+}
+
+
 
 // GetByUserHandler response posts by user id.
 func (pr *PostRouter) GetByUserHandler(w http.ResponseWriter, r *http.Request) {
@@ -152,6 +171,8 @@ func (pr *PostRouter) Routes() http.Handler {
 	r.Use(middleware.Authorizator)
 
 	r.Get("/user/{userId}", pr.GetByUserHandler)
+
+	r.Get("/subject/{subjectId}", pr.GetBySubjectHandler)
 
 	r.Get("/", pr.GetAllHandler)
 
