@@ -81,8 +81,8 @@ func (sr *SubjectRepository) GetByYear(ctx context.Context, year int) ([]subject
 // Create adds a new subject.
 func (sr *SubjectRepository) Create(ctx context.Context, s *subject.Subject) error {
 	q := `
-	INSERT INTO subjects (id, name, year)
-		VALUES ($1, $2, $3)
+	INSERT INTO subjects (name, year)
+		VALUES ($1, $2)
 		RETURNING id;
 	`
 
@@ -93,7 +93,7 @@ func (sr *SubjectRepository) Create(ctx context.Context, s *subject.Subject) err
 
 	defer stmt.Close()
 
-	row := stmt.QueryRowContext(ctx, s.ID, s.Name, s.Year)
+	row := stmt.QueryRowContext(ctx, s.Name, s.Year)
 
 	err = row.Scan(&s.ID)
 	if err != nil {
