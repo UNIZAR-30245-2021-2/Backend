@@ -8,8 +8,7 @@ Esta primera versión está basada en el proyecto de ejemplo:
 
 En futuras versiones se realizarán cambios añadiendo nuevas funcionalidades.
 ## Documentación
-En esta página web podéis consultar la documentación de la API, sobre todo de cara al Front-end para saber como realizar las peticiones.
-https://app.swaggerhub.com/apis/EINAtic/Backend/1.0.0 
+En la Wiki del repositorio podéis consultar la documentación de la API, sobre todo de cara al Front-end para saber como realizar las peticiones.
 Iré añadiendo más documentación a medida que aumente las funcionalidades.
 
 ## ¿Qué hace ahora?
