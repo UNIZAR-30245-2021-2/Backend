@@ -124,6 +124,7 @@ func (pr *PostRouter) DeleteHandler(w http.ResponseWriter, r *http.Request) {
 //GetBySubjectHandler response posts by subject id.
 func (pr *PostRouter) GetBySubjectHandler(w http.ResponseWriter, r *http.Request) {
 	subjectIDStr := chi.URLParam(r, "subjectId")
+	orderStr := chi.URLParam(r, "order")
 
 	subjectID, err := strconv.Atoi(subjectIDStr)
 	if err != nil {
@@ -132,7 +133,7 @@ func (pr *PostRouter) GetBySubjectHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	ctx := r.Context()
-	posts, err := pr.Repository.GetBySubject(ctx, uint(subjectID))
+	posts, err := pr.Repository.GetBySubject(ctx, uint(subjectID), orderStr)
 	if err != nil {
 		response.HTTPError(w, r, http.StatusNotFound, err.Error())
 		return
@@ -211,7 +212,7 @@ func (pr *PostRouter) Routes() http.Handler {
 
 	r.Get("/user/{userId}", pr.GetByUserHandler)
 
-	r.Get("/subject/{subjectId}", pr.GetBySubjectHandler)
+	r.Get("/subject/{subjectId}/{order}", pr.GetBySubjectHandler)
 
 	r.Get("/{subjectId}/category/{category}", pr.GetByCategoryHandler)
 

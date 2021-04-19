@@ -58,12 +58,25 @@ func (pr *PostRepository) GetOne(ctx context.Context, id uint) (post.Post, error
 }
 
 // GetBySubject returns all subject posts.
-func (pr *PostRepository) GetBySubject(ctx context.Context, subjectID uint) ([]post.Post, error) {
-	q := `
-	SELECT id, title, category, body, user_id, subject_id, created_at, updated_at
+func (pr *PostRepository) GetBySubject(ctx context.Context, subjectID uint, order string) ([]post.Post, error) {
+	q_created := `
+	SELECT id, title, category, created_at, updated_at
 		FROM posts
-		WHERE subject_id = $1;
+		WHERE subject_id = $1
+		ORDER BY created_at;
 	`
+	q_updated := `
+	SELECT id, title, category, created_at, updated_at
+		FROM posts
+		WHERE subject_id = $1
+		ORDER BY updated_at;
+	`
+	var q string
+	if order == "created" {
+		q = q_created
+	} else { // order == "updated"
+		q = q_updated
+	}
 
 	rows, err := pr.Data.DB.QueryContext(ctx, q, subjectID)
 	if err != nil {
@@ -75,7 +88,7 @@ func (pr *PostRepository) GetBySubject(ctx context.Context, subjectID uint) ([]p
 	var posts []post.Post
 	for rows.Next() {
 		var p post.Post
-		rows.Scan(&p.ID, &p.Title, &p.Category, &p.Body, &p.UserID, &p.SubjectId,
+		rows.Scan(&p.ID, &p.Title, &p.Category,
 			&p.CreatedAt, &p.UpdatedAt)
 		posts = append(posts, p)
 	}

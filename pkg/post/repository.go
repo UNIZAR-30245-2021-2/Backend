@@ -6,7 +6,7 @@ import "context"
 type Repository interface {
 	GetAll(ctx context.Context) ([]Post, error)
 	GetOne(ctx context.Context, id uint) (Post, error)
-	GetBySubject(ctx context.Context, subjectID uint) ([]Post, error)
+	GetBySubject(ctx context.Context, subjectID uint, order string) ([]Post, error)
 	GetByUser(ctx context.Context, userID uint) ([]Post, error)
 	GetByCategory(ctx context.Context, subjectID uint, category string) ([]Post, error)
 	GetByTitle(ctx context.Context, subjectID uint, title string) ([]Post, error)
