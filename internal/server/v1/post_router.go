@@ -162,6 +162,27 @@ func (pr *PostRouter) GetByCategoryHandler (w http.ResponseWriter, r *http.Reque
 	response.JSON(w, r, http.StatusOK, response.Map{"posts": posts})
 }
 
+//GetByTitleHandler response posts by subject id and title.
+func (pr *PostRouter) GetByTitleHandler (w http.ResponseWriter, r *http.Request) {
+	subjectIDStr := chi.URLParam(r, "subjectId")
+	titleStr := chi.URLParam(r, "title")
+
+	subjectID, err := strconv.Atoi(subjectIDStr)
+	if err != nil {
+		response.HTTPError(w, r, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	ctx := r.Context()
+	posts, err := pr.Repository.GetByTitle(ctx, uint(subjectID), titleStr)
+	if err != nil {
+		response.HTTPError(w, r, http.StatusNotFound, err.Error())
+		return
+	}
+
+	response.JSON(w, r, http.StatusOK, response.Map{"posts": posts})
+}
+
 // GetByUserHandler response posts by user id.
 func (pr *PostRouter) GetByUserHandler(w http.ResponseWriter, r *http.Request) {
 	userIDStr := chi.URLParam(r, "userId")
@@ -192,7 +213,9 @@ func (pr *PostRouter) Routes() http.Handler {
 
 	r.Get("/subject/{subjectId}", pr.GetBySubjectHandler)
 
-	r.Get("/{subjectId}/{category}", pr.GetByCategoryHandler)
+	r.Get("/{subjectId}/category/{category}", pr.GetByCategoryHandler)
+
+	r.Get("/{subjectId}/title/{title}", pr.GetByTitleHandler)
 
 	r.Get("/", pr.GetAllHandler)
 
