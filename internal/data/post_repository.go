@@ -109,6 +109,30 @@ func (pr *PostRepository) GetByUser(ctx context.Context, userID uint) ([]post.Po
 	return posts, nil
 }
 
+func (pr *PostRepository) GetByCategory(ctx context.Context, subjectID uint, category string) ([]post.Post, error) {
+	q := `
+	SELECT id, title, category, created_at, updated_at
+	FROM posts
+	WHERE subject_id = $1 AND category LIKE $2;
+	`
+
+	rows, err := pr.Data.DB.QueryContext(ctx, q, subjectID, category)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var posts []post.Post
+	for rows.Next() {
+		var p post.Post
+		rows.Scan(&p.ID, &p.Title, &p.Category, &p.CreatedAt, &p.UpdatedAt)
+		posts = append(posts, p)
+	}
+
+	return posts, nil
+}
+
 // Create adds a new post.
 func (pr *PostRepository) Create(ctx context.Context, p *post.Post) error {
 	q := `
