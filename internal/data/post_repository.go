@@ -60,13 +60,13 @@ func (pr *PostRepository) GetOne(ctx context.Context, id uint) (post.Post, error
 // GetBySubject returns all subject posts.
 func (pr *PostRepository) GetBySubject(ctx context.Context, subjectID uint, order string) ([]post.Post, error) {
 	q_created := `
-	SELECT id, title, category, created_at, updated_at
+	SELECT id, user_id, title, category, created_at, updated_at
 		FROM posts
 		WHERE subject_id = $1
 		ORDER BY created_at;
 	`
 	q_updated := `
-	SELECT id, title, category, created_at, updated_at
+	SELECT id, user_id, title, category, created_at, updated_at
 		FROM posts
 		WHERE subject_id = $1
 		ORDER BY updated_at;
@@ -88,7 +88,7 @@ func (pr *PostRepository) GetBySubject(ctx context.Context, subjectID uint, orde
 	var posts []post.Post
 	for rows.Next() {
 		var p post.Post
-		rows.Scan(&p.ID, &p.Title, &p.Category,
+		rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Category,
 			&p.CreatedAt, &p.UpdatedAt)
 		posts = append(posts, p)
 	}
@@ -124,7 +124,7 @@ func (pr *PostRepository) GetByUser(ctx context.Context, userID uint) ([]post.Po
 
 func (pr *PostRepository) GetByCategory(ctx context.Context, subjectID uint, category string) ([]post.Post, error) {
 	q := `
-	SELECT id, title, category, created_at, updated_at
+	SELECT id, user_id, title, category, created_at, updated_at
 	FROM posts
 	WHERE subject_id = $1 AND category LIKE $2;
 	`
@@ -139,7 +139,7 @@ func (pr *PostRepository) GetByCategory(ctx context.Context, subjectID uint, cat
 	var posts []post.Post
 	for rows.Next() {
 		var p post.Post
-		rows.Scan(&p.ID, &p.Title, &p.Category, &p.CreatedAt, &p.UpdatedAt)
+		rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Category, &p.CreatedAt, &p.UpdatedAt)
 		posts = append(posts, p)
 	}
 
@@ -148,7 +148,7 @@ func (pr *PostRepository) GetByCategory(ctx context.Context, subjectID uint, cat
 
 func (pr *PostRepository) GetByTitle(ctx context.Context, subjectID uint, title string) ([]post.Post, error) {
 	q := `
-	SELECT id, title, category, created_at, updated_at
+	SELECT id, user_id, title, category, created_at, updated_at
 	FROM posts
 	WHERE subject_id = $1 AND title LIKE $2;
 	`
@@ -163,7 +163,7 @@ func (pr *PostRepository) GetByTitle(ctx context.Context, subjectID uint, title 
 	var posts []post.Post
 	for rows.Next() {
 		var p post.Post
-		rows.Scan(&p.ID, &p.Title, &p.Category, &p.CreatedAt, &p.UpdatedAt)
+		rows.Scan(&p.ID, &p.UserID, &p.Title, &p.Category, &p.CreatedAt, &p.UpdatedAt)
 		posts = append(posts, p)
 	}
 
