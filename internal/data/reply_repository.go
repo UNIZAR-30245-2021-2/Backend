@@ -13,7 +13,7 @@ type ReplyRepository struct {
 }
 
 // GetByPost returns all post replies.
-func (r ReplyRepository) GetByPost(ctx context.Context, postID uint) ([]reply.Reply, error) {
+func (rr *ReplyRepository) GetByPost(ctx context.Context, postID uint) ([]reply.Reply, error) {
 	q := `
 	SELECT id, user_id, body, created_at, updated_at
 		FROM replies
@@ -21,7 +21,7 @@ func (r ReplyRepository) GetByPost(ctx context.Context, postID uint) ([]reply.Re
 		ORDER BY created_at;
 	`
 
-	rows, err := r.Data.DB.QueryContext(ctx, q, postID)
+	rows, err := rr.Data.DB.QueryContext(ctx, q, postID)
 	if err != nil {
 		return nil, err
 	}
@@ -39,14 +39,14 @@ func (r ReplyRepository) GetByPost(ctx context.Context, postID uint) ([]reply.Re
 }
 
 // Create adds a new reply.
-func (r ReplyRepository) Create(ctx context.Context, reply *reply.Reply) error {
+func (rr *ReplyRepository) Create(ctx context.Context, reply *reply.Reply) error {
 	q := `
 	INSERT INTO replies (user_id, post_id, body, created_at, updated_at)
-		VALUES ($1, $2, $3)
+		VALUES ($1, $2, $3, $4, $5)
 		RETURNING id;
 	`
 
-	stmt, err := r.Data.DB.PrepareContext(ctx, q)
+	stmt, err := rr.Data.DB.PrepareContext(ctx, q)
 	if err != nil {
 		return err
 	}
@@ -65,11 +65,44 @@ func (r ReplyRepository) Create(ctx context.Context, reply *reply.Reply) error {
 }
 
 // Update updates a reply by id.
-func (r ReplyRepository) Update(ctx context.Context, id uint, reply reply.Reply) error {
-	panic("implement me")
+func (rr *ReplyRepository) Update(ctx context.Context, id uint, reply reply.Reply) error {
+	q := `
+	UPDATE replies set body=$1, updated_at=$2
+		WHERE id=$3;
+	`
+
+	stmt, err := rr.Data.DB.PrepareContext(ctx, q)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(
+		ctx, reply.Body, time.Now(), id,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Delete removes a reply by id.
-func (r ReplyRepository) Delete(ctx context.Context, id uint) error {
-	panic("implement me")
+func (rr *ReplyRepository) Delete(ctx context.Context, id uint) error {
+	q := `DELETE FROM replies WHERE id=$1;`
+
+	stmt, err := rr.Data.DB.PrepareContext(ctx, q)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
