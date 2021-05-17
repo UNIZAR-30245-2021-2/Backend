@@ -41,5 +41,5 @@ CREATE TABLE IF NOT EXISTS replies (
     updated_at timestamp NOT NULL,
     CONSTRAINT pk_replies PRIMARY KEY(id),
     CONSTRAINT fk_replies_users FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT fk_replies_posts FOREIGN KEY(post_id) REFERENCES posts(id)
+    CONSTRAINT fk_replies_posts FOREIGN KEY(post_id) REFERENCES posts(id) ON DELETE CASCADE
 );

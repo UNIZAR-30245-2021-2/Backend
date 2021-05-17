@@ -63,13 +63,13 @@ func (pr *PostRepository) GetBySubject(ctx context.Context, subjectID uint, orde
 	SELECT id, user_id, title, category, created_at, updated_at
 		FROM posts
 		WHERE subject_id = $1
-		ORDER BY created_at;
+		ORDER BY created_at DESC;
 	`
 	q_updated := `
 	SELECT id, user_id, title, category, created_at, updated_at
 		FROM posts
 		WHERE subject_id = $1
-		ORDER BY updated_at;
+		ORDER BY updated_at DESC;
 	`
 	var q string
 	if order == "created" {
