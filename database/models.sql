@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS posts (
     created_at timestamp DEFAULT now(),
     updated_at timestamp NOT NULL,
     CONSTRAINT pk_posts PRIMARY KEY(id),
-    CONSTRAINT fk_posts_users FOREIGN KEY(user_id) REFERENCES users(id),
-    CONSTRAINT fk_posts_subjects FOREIGN KEY(subject_id) REFERENCES subjects(id)
+    CONSTRAINT fk_posts_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_posts_subjects FOREIGN KEY(subject_id) REFERENCES subjects(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS replies (
@@ -40,6 +40,6 @@ CREATE TABLE IF NOT EXISTS replies (
     created_at timestamp DEFAULT now(),
     updated_at timestamp NOT NULL,
     CONSTRAINT pk_replies PRIMARY KEY(id),
-    CONSTRAINT fk_replies_users FOREIGN KEY(user_id) REFERENCES users(id),
+    CONSTRAINT fk_replies_users FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     CONSTRAINT fk_replies_posts FOREIGN KEY(post_id) REFERENCES posts(id) ON DELETE CASCADE
 );
